@@ -36,8 +36,5 @@ totalIntensitiesMinutes <- countIntensitiesMinutes %>%
 #the below calculation will count the number of individual people who get greater than or equal to 664.3 minutes. 
 
 totalIntensitiesMinutes %>%
-  mutate(count = 1) %>%
-  reframe(totalActive >= cdcRecommendedMonthlyActiveMinutes)
-
-filter(totalIntensitiesMinutes, Id, TotalActive>=cdcRecommendedMonthlyActiveMinutes)
+  filter(totalActive>=cdcRecommendedMonthlyActiveMinutes)
   
