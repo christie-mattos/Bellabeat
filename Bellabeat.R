@@ -33,8 +33,10 @@ totalIntensitiesMinutes <- countIntensitiesMinutes %>%
  cdcRecommendedMonthlyActiveMinutes <- 664.3
 
 
-#the below calculation will count the number of individual people who get greater than or equal to 664.3 minutes. 
-
-totalIntensitiesMinutes %>%
+#the below calculation will filter the number of individual people who get greater than or equal to 664.3 minutes. 
+#assign name to the filtered list as metCdcGuidance
+metCdcGuidance <- totalIntensitiesMinutes %>%
   filter(totalActive>=cdcRecommendedMonthlyActiveMinutes)
   
+#17 out of 33 individuals met or exceeded the CDC's recommendations, which ends up being roughly 52% of Bellabeat's users. According to a Time magazine article
+#only 23% of Americans get the CDC's recommended amount of exercise. https://time.com/5324940/americans-exercise-physical-activity-guidelines/
