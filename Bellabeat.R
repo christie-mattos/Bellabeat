@@ -37,6 +37,13 @@ totalIntensitiesMinutes <- countIntensitiesMinutes %>%
 #assign name to the filtered list as metCdcGuidance
 metCdcGuidance <- totalIntensitiesMinutes %>%
   filter(totalActive>=cdcRecommendedMonthlyActiveMinutes)
-  
+
+#Get percent count of number of Bellabeat users who met guidelines
+
+
 #17 out of 33 individuals met or exceeded the CDC's recommendations, which ends up being roughly 52% of Bellabeat's users. According to a Time magazine article
 #only 23% of Americans get the CDC's recommended amount of exercise. https://time.com/5324940/americans-exercise-physical-activity-guidelines/
+
+#demonstrate the above statistics in two separate pie charts - These will be shown side-by-side in a slideshow presentation.
+
+pie(metCdcGuidance, labels="Met Guidelines", main = "Bellabeat Users Who Met CDC Guidelines", col = green(metCdcGuidance))
