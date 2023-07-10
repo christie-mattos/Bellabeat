@@ -34,12 +34,16 @@ totalIntensitiesMinutes <- countIntensitiesMinutes %>%
 
 
 #the below calculation will filter the number of individual people who get greater than or equal to 664.3 minutes. 
-#assign name to the filtered list as metCdcGuidance
+#assign name to the filtered list as metCdcGuidance. Select statement drops the ID column so that I only have the totalActive column. Will make it easier to get percent.
 metCdcGuidance <- totalIntensitiesMinutes %>%
   filter(totalActive>=cdcRecommendedMonthlyActiveMinutes)
 
-#Get percent count of number of Bellabeat users who met guidelines
+#Get it to calculate percent for CDC guidance
+bellabeatCountMetCdc<-nrow(metCdcGuidance)
 
+
+#count total Bellabeat users
+bellabeatAllCount<-nrow(totalIntensitiesMinutes)
 
 #17 out of 33 individuals met or exceeded the CDC's recommendations, which ends up being roughly 52% of Bellabeat's users. According to a Time magazine article
 #only 23% of Americans get the CDC's recommended amount of exercise. https://time.com/5324940/americans-exercise-physical-activity-guidelines/
