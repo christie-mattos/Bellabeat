@@ -38,6 +38,13 @@ totalIntensitiesMinutes <- countIntensitiesMinutes %>%
 metCdcGuidance <- totalIntensitiesMinutes %>%
   filter(totalActive>=cdcRecommendedMonthlyActiveMinutes)
 
+
+#17 out of 33 individuals met or exceeded the CDC's recommendations, which ends up being roughly 52% of Bellabeat's users. According to a Time magazine article
+#only 23% of Americans get the CDC's recommended amount of exercise. https://time.com/5324940/americans-exercise-physical-activity-guidelines/
+
+#create data frame for the number of americans that get the CDC's recommended amount of exercise. Presented as a percent (23%).
+nonuserCountMetPercentCdc<-23
+
 #Get it to calculate percent for CDC guidance
 bellabeatCountMetCdc<-nrow(metCdcGuidance)
 
@@ -45,9 +52,24 @@ bellabeatCountMetCdc<-nrow(metCdcGuidance)
 #count total Bellabeat users
 bellabeatAllCount<-nrow(totalIntensitiesMinutes)
 
-#17 out of 33 individuals met or exceeded the CDC's recommendations, which ends up being roughly 52% of Bellabeat's users. According to a Time magazine article
-#only 23% of Americans get the CDC's recommended amount of exercise. https://time.com/5324940/americans-exercise-physical-activity-guidelines/
+#count Bellabeat users who didn't meet CDC guidance
+bellabeatCountDidntMeetCdc<-bellabeatAllCount-bellabeatCountMetCdc
+
+#count percent of Bellabeatusers who met CDC guidance
+bellabeatCountMetPercentCdc<-round((bellabeatCountMetCdc/bellabeatAllCount)*100)
+
+#create dataframe for Bellabeat bar chart. This is the new one and I think it's right.
+subgroup <- c("nonuser", "bellabeat user")
+percent <-(nonuserCountMetPercentCdc, bellabeatCountMetPercentCdc) 
+compareBellabeatVsNonusersMetCdc<-data.frame(subgroup, percent)
+
+#dataset setup to create Bellabeat bar Chart
+ggplot(bellabeatCountMetPercentCdc, aes(x="Bellabeat Users Met Guidelines", y=100, fill=BellabeatUsers))
 
 #demonstrate the above statistics in two separate pie charts - These will be shown side-by-side in a slideshow presentation.
 
-pie(metCdcGuidance, labels="Met Guidelines", main = "Bellabeat Users Who Met CDC Guidelines", col = green(metCdcGuidance))
+ggplot(compareBellabeatVsNonusersMetCdc, aes(x=subgroup, y=percent)) +
+  geom_bar(stat="identity") +
+  ylim(0, 100)
+
+       
