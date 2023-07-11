@@ -63,13 +63,14 @@ subgroup <- c("nonuser", "bellabeat user")
 percent <-(nonuserCountMetPercentCdc, bellabeatCountMetPercentCdc) 
 compareBellabeatVsNonusersMetCdc<-data.frame(subgroup, percent)
 
-#dataset setup to create Bellabeat bar Chart
-ggplot(bellabeatCountMetPercentCdc, aes(x="Bellabeat Users Met Guidelines", y=100, fill=BellabeatUsers))
+#demonstrate the above statistics in a comparative barchart - These will be shown side-by-side in a slideshow presentation.
 
-#demonstrate the above statistics in two separate pie charts - These will be shown side-by-side in a slideshow presentation.
-
-ggplot(compareBellabeatVsNonusersMetCdc, aes(x=subgroup, y=percent)) +
+ggplot(compareBellabeatVsNonusersMetCdc, aes(x=subgroup, y=percent, fill=subgroup)) +
   geom_bar(stat="identity") +
-  ylim(0, 100)
+  ylim(0, 100) +
+  labs(title = "Percent of People who met CDC's Exercise Guideliness") +
+  scale_fill_manual(values=c("Purple",
+                             "Orange"))
+
 
        
