@@ -1,0 +1,132 @@
+---
+title: "Bellabeat Notebook"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+Below is an explanation and my code for my Google Data Analytics Certification Course Capstone project. 
+
+I chose to do my project for a fictional organization called Bellabeat, which produces fitness smart devices. My objective with this project is to analyze Bellabeat smart usage data in order to gain insight into how people are using their smart devices, and make marketing recommendations based on the data. 
+
+I ended up using the data to compare the exercise practices of Bellabeat users to nonusers, and found that based on the data provided by Bellabeat and compared to non-users, Bellabeat users tended to exercise more than nonusers and that Bellabeat users are 29% more likely to be meeting exercise goals to combat heart Disease (per CDC guidelines) than nonusers. Below is the process I used to come to that conclusion, and to ultimately visualize the data.
+
+The associated presentation [can be found here](https://docs.google.com/presentation/d/1nwD0oYYpYL_wrQ7gybQCYd1VG5poVj6cxqtEfn0ZeeQ/edit?usp=sharing).
+
+Step 1: Install and load the necessary packages for this analysis. ggplot2 will be used for visualizations later and dplyr for the analysis process.
+
+```{r}
+install.packages("tidyverse", repos="https://cloud.r-project.org/")
+
+install.packages("ggplot2", repos="https://cloud.r-project.org/")
+
+install.packages("dplyr", repos="https://cloud.r-project.org/")
+
+```
+
+```{r}
+library("tidyverse")
+
+library("ggplot2")
+
+library("dplyr")
+```
+
+Step 2: Pull in the necessary CSV for analysis.
+
+```{r}
+dailyIntensities <- read.csv("csvs/dailyintensities_merged.csv")
+```
+
+Step 3: Clean & Filter the data for analysis.
+
+Gather data for each ID from dailyintensities: count the number of FairlyActiveMinutes and VeryActiveMinutes per day as countIntensitiesMinutes.
+
+```{r}
+countIntensitiesMinutes <- dailyIntensities %>%
+  select(Id, ActivityDay, FairlyActiveMinutes, VeryActiveMinutes)
+```
+
+And then add together all the count intensity minutes  per individual person, or Id.
+
+```{r}
+totalIntensitiesMinutes <- countIntensitiesMinutes %>%
+  group_by(Id) %>%
+  summarise(totalActive = sum(FairlyActiveMinutes + VeryActiveMinutes, na.rm = TRUE))
+```
+
+Step 4: Analyze the data.
+
+Context for further analysis: There are roughly 31 days worth of data in this dataset. The CDC recommends 2 hrs 30 minutes of moderate intensity exercise per week to combat heart disease. Since the dataset doesn't go week-to week I needed to do some calculations to get an idea of what this works out to per month. To get a rough idea of this, I divided 150 minutes by 7 to get 21.4 minutes of moderate to intense exercise needed per day. This was then multiplied by 31 days, giving me 664.3 minutes needed per month to meet the CDC's monthly minimum requirements to combat heart disease.
+
+This calc is to declare 664.3 as a data frame to use in the next steps of analysis. cdcRecommendedMonthlyActiveMinutes.
+
+```{r}
+cdcRecommendedMonthlyActiveMinutes <- 664.3
+```
+
+The below calculation will filter the number of individual people who get greater than or equal to 664.3 minutes of fair to active minutes of activity. Assign name to the filtered list as metCdcGuidance.
+
+```{r}
+metCdcGuidance <- totalIntensitiesMinutes %>%
+  filter(totalActive >= cdcRecommendedMonthlyActiveMinutes)
+```
+
+Context for further analysis: 17 out of 33 individuals met or exceeded the CDC's recommendations, which ends up being roughly 52% of Bellabeat's users. According to a Time magazine article only 23% of Americans get the CDC's recommended amount of exercise. [Data Source](https://time.com/5324940/americans-exercise-physical-activity-guidelines/).
+
+Create data frame for the number of americans that get the CDC's recommended amount of exercise. Presented as a percent (23%).
+
+```{r}
+nonuserCountMetPercentCdc <- 23
+```
+
+Get the number of individual IDs who met the CDC guidance - This will be used later to calculate a percent.
+
+```{r}
+bellabeatCountMetCdc <- nrow(metCdcGuidance)
+```
+
+Count total Bellabeat users - this will be used later to calculate a percent.
+
+```{r}
+bellabeatAllCount <- nrow(totalIntensitiesMinutes)
+```
+
+Calculate a percent of Bellabeatusers who met CDC guidance by comparing it to all unique Bellabeat users in dataset.
+
+```{r}
+bellabeatCountMetPercentCdc <- round((bellabeatCountMetCdc / bellabeatAllCount) * 100)
+```
+
+Create dataframe for Bellabeat comparative bar chart. This will pull in percentages for nonusers as well as bellabeat users. Subgroup and Percent create columns that will be used in the next dataframe.
+
+```{r}
+subgroup <- c("nonuser", "bellabeat user")
+percent <- c(nonuserCountMetPercentCdc, bellabeatCountMetPercentCdc)
+```
+
+compareBellabeatNonusersMetCdc adds subgroup and percent into a dataframe which will be used to construct the bar chart.
+
+```{r}
+compareBellabeatVsNonusersMetCdc <- data.frame(subgroup, percent)
+```
+
+Step 5: Data Visualization: Construct the Bar Chart.
+
+Demonstrate the above statistics into a comparative barchart.
+
+```{r}
+ggplot(compareBellabeatVsNonusersMetCdc, aes(x = subgroup, y = percent, fill = subgroup)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  ylim(0, 100) +
+  labs(title = stringr::str_wrap("Percent of People who met CDC's Exercise Guidelines", width = 45)) +
+  scale_fill_manual(values = c(
+    "lightcoral",
+    "dimgray"
+  )) +
+  geom_text(aes(label = percent), position = position_dodge(width = .9), vjust = -.25)
+theme(aspect.ratio = 8 / 8)
+```
+
