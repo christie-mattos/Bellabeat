@@ -121,7 +121,10 @@ Demonstrate the above statistics into a comparative barchart.
 ggplot(compareBellabeatVsNonusersMetCdc, aes(x = subgroup, y = percent, fill = subgroup)) +
   geom_bar(position = "dodge", stat = "identity") +
   ylim(0, 100) +
-  labs(title = stringr::str_wrap("Percent of People who met CDC's Exercise Guidelines", width = 45)) +
+  labs(title = stringr::str_wrap(
+    "Percent of People who met CDC's Exercise Guidelines", 
+    width = 45
+    )) +
   scale_fill_manual(values = c(
     "lightcoral",
     "dimgray"
